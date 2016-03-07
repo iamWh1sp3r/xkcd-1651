@@ -76,9 +76,11 @@ function Crane(world) {
 
   function keydown(event) {
     switch(event.keyCode) {
-      case 33: // pgup
+      case 77: // m
+        segments.a.rotationChange = segments.a.speed;
         break;
-      case 34: // pgdown
+      case 78: // n
+        segments.a.rotationChange = -segments.a.speed;
         break;
       case 37: // left
         claw.rotationChange = -speed;
@@ -86,40 +88,38 @@ function Crane(world) {
       case 39: // right
         claw.rotationChange = speed;
         break;
-      case 40: // up
-        claw.angleChange = -claw.angleSpeed;
-        break;
       case 38: // down
         claw.angleChange = claw.angleSpeed;
         break;
+      case 40: // up
+        claw.angleChange = -claw.angleSpeed;
+        break;
       case 188: // ,
         segments.b.rotationChange = -speed;
-        // segments.a.rotationChange = -segments.a.speed;
         break;
       case 190: // .
         segments.b.rotationChange = speed;
-        // segments.a.rotationChange = segments.a.speed;
         break;
     }
   }
 
   function keyup(event) {
     switch(event.keyCode) {
-      case 33:
-      case 34:
+      case 77:  // m
+      case 78:  // n
+        segments.a.rotationChange = 0;
         break;
-      case 37:
-      case 39:
+      case 37:  // left
+      case 39:  // right
         claw.rotationChange = 0;
         break;
-      case 38:
-      case 40:
+      case 38:  // down
+      case 40:  // up
         claw.angleChange = 0;
         break;
-      case 188:
-      case 190:
+      case 188: // ,
+      case 190: // .
         segments.b.rotationChange = 0;
-        // segments.a.rotationChange = 0;
         break;
     }
   }
@@ -153,7 +153,7 @@ function Crane(world) {
   }
 
   function applySegmentChanges() {
-    segments.a.rotation += segments.a.rotationChange;
+    segments.a.rotation = Math.min(Math.max(segments.b.rotation + segments.a.rotationChange, -1.0), 1.0);
     segments.b.rotation = Math.min(Math.max(segments.b.rotation + segments.b.rotationChange, -2.4), 2.4);
   }
 
