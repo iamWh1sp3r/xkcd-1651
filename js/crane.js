@@ -3,26 +3,27 @@ function Crane(world) {
 
   var Bodies = Matter.Bodies,
       Body = Matter.Body,
+      Vector = Matter.Vector,
       Vertices = Matter.Vertices,
       World = Matter.World;
 
+  this.keydown = keydown;
+  this.keyup = keyup;
   this.update = update;
-  this.keyDown = keyDown;
-  this.keyUp = keyUp;
+
+  var speed = 0.018;
 
   var segments = {
     a: {
       rotation: 0,
-      change: 0,
-      speed: 0.01,
+      rotationChange: 0,
       size: { w: 30, h: 175 },
       position: { x: 400, y: 579.5 },
       body: function() { return segmentBody(this); }
     },
     b: {
       rotation: 0,
-      change: 0,
-      speed: 0.01,
+      rotationChange: 0,
       size: { w: 20, h: 150 },
       body: function() { return segmentBody(this); }
     },
@@ -52,8 +53,7 @@ function Crane(world) {
     angle: 0.7,
     rotation: 0,
     angleChange: 0,
-    rotationChange: 0,
-    speed: 0.008
+    rotationChange: 0
   };
 
   World.add(world, [
@@ -67,52 +67,49 @@ function Crane(world) {
 
   function segmentBody(segment) {
     if (!segment.$body) {
-      segment.$body = Bodies.rectangle(0, 0, segment.size.w, segment.size.h, { friction: 0.5, isStatic: true });
+      segment.$body = Bodies.rectangle(0, 0, segment.size.w, segment.size.h, { isStatic: true });
     }
 
     return segment.$body;
   }
 
-  function keyDown(event) {
-    console.log(event.keyCode);
-
+  function keydown(event) {
     switch(event.keyCode) {
       case 33: // pgup
-        claw.rotationChange = claw.speed;
         break;
       case 34: // pgdown
-        claw.rotationChange = -claw.speed;
         break;
       case 37: // left
-        segments.b.change = -segments.b.speed;
+        claw.rotationChange = -speed;
         break;
       case 39: // right
-        segments.b.change = segments.b.speed;
+        claw.rotationChange = speed;
         break;
       case 40: // up
-        claw.angleChange = -claw.speed;
+        claw.angleChange = -speed;
         break;
       case 38: // down
-        claw.angleChange = claw.speed;
+        claw.angleChange = speed;
         break;
       case 188: // ,
-        segments.a.change = -segments.a.speed;
+        segments.b.rotationChange = -speed;
+        // segments.a.rotationChange = -segments.a.speed;
         break;
       case 190: // .
-        segments.a.change = segments.a.speed;
+        segments.b.rotationChange = speed;
+        // segments.a.rotationChange = segments.a.speed;
         break;
     }
   }
 
-  function keyUp(event) {
+  function keyup(event) {
     switch(event.keyCode) {
       case 33:
       case 34:
-        claw.rotationChange = 0;
         break;
       case 37:
       case 39:
-        segments.b.change = 0;
+        claw.rotationChange = 0;
         break;
       case 38:
       case 40:
@@ -120,16 +117,15 @@ function Crane(world) {
         break;
       case 188:
       case 190:
-        segments.a.change = 0;
+        segments.b.rotationChange = 0;
+        // segments.a.rotationChange = 0;
         break;
     }
   }
 
   function update() {
-    segments.a.rotation += segments.a.change;
-    segments.b.rotation += segments.b.change;
-    claw.angle += claw.angleChange;
-    claw.rotation += claw.rotationChange;
+    applySegmentChanges();
+    applyClawChanges();
     updatePositions();
   }
 
@@ -150,39 +146,52 @@ function Crane(world) {
     };
   }
 
-  function updatePositions() {
-    var segPos, clawPos, rotation;
+  function applyClawChanges() {
+    claw.angle = Math.min(Math.max(claw.angle + claw.angleChange, 0.44), 1.18);
+    claw.rotation = Math.min(Math.max(claw.rotation + claw.rotationChange, -1.65), 1.65);
+  }
 
+  function applySegmentChanges() {
+    segments.a.rotation += segments.a.rotationChange;
+    segments.b.rotation = Math.min(Math.max(segments.b.rotation + segments.b.rotationChange, -2.4), 2.4);
+  }
+
+  function updateSegment(body, position, rotation) {
+    Body.setVelocity(body, Vector.sub(position, body.position));
+    Body.setPosition(body, position);
+    Body.setAngularVelocity(body, rotation - body.angle);
+    Body.setAngle(body, rotation);
+  }
+
+  function updatePositions() {
+    var segPos, clawPos, rotation, py;
+
+    // segment a
     rotation = segments.a.rotation;
     segPos = segmentPosition(rotation, segments.a.position, segments.a.size);
-    Body.setPosition(segments.a.body(), segPos.center);
-    Body.setAngle(segments.a.body(), rotation);
+    updateSegment(segments.a.body(), segPos.center, rotation);
 
+    // segment b
     rotation = segments.a.rotation + segments.b.rotation;
     segPos = segmentPosition(rotation, segPos.tip, segments.b.size);
-    Body.setPosition(segments.b.body(), segPos.center);
-    Body.setAngle(segments.b.body(), rotation);
+    updateSegment(segments.b.body(), segPos.center, rotation);
 
     // left claw
     rotation = segments.a.rotation + segments.b.rotation + claw.rotation - claw.angle;
     clawPos = segmentPosition(rotation, segPos.tip, segments.la.size);
-    Body.setPosition(segments.la.body(), clawPos.center);
-    Body.setAngle(segments.la.body(), rotation);
+    updateSegment(segments.la.body(), clawPos.center, rotation);
 
     rotation = segments.a.rotation + segments.b.rotation + claw.rotation - claw.angle + 1.2;
     clawPos = segmentPosition(rotation, clawPos.tip, segments.lb.size);
-    Body.setPosition(segments.lb.body(), clawPos.center);
-    Body.setAngle(segments.lb.body(), rotation);
+    updateSegment(segments.lb.body(), clawPos.center, rotation);
 
     // right claw
     rotation = segments.a.rotation + segments.b.rotation + claw.rotation  + claw.angle;
     clawPos = segmentPosition(rotation, segPos.tip, segments.ra.size);
-    Body.setPosition(segments.ra.body(), clawPos.center);
-    Body.setAngle(segments.ra.body(), rotation);
+    updateSegment(segments.ra.body(), clawPos.center, rotation);
 
     rotation = segments.a.rotation + segments.b.rotation + claw.rotation  + claw.angle - 1.2;
     clawPos = segmentPosition(rotation, clawPos.tip, segments.rb.size);
-    Body.setPosition(segments.rb.body(), clawPos.center);
-    Body.setAngle(segments.rb.body(), rotation);
+    updateSegment(segments.rb.body(), clawPos.center, rotation);
   }
 }
