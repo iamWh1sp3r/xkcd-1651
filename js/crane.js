@@ -51,8 +51,9 @@ function Crane(world) {
 
   var claw = {
     angle: 0.7,
-    rotation: 0,
     angleChange: 0,
+    angleSpeed: 0.01,
+    rotation: 0,
     rotationChange: 0
   };
 
@@ -86,10 +87,10 @@ function Crane(world) {
         claw.rotationChange = speed;
         break;
       case 40: // up
-        claw.angleChange = -speed;
+        claw.angleChange = -claw.angleSpeed;
         break;
       case 38: // down
-        claw.angleChange = speed;
+        claw.angleChange = claw.angleSpeed;
         break;
       case 188: // ,
         segments.b.rotationChange = -speed;
