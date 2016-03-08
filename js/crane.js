@@ -11,11 +11,11 @@ function Crane(world) {
   this.keyup = keyup;
   this.update = update;
 
-  var speed = 0.018;
-
   var segments = {
     a: {
       rotation: 0,
+      limit: 0.5,
+      speed: 0.01,
       rotationChange: 0,
       size: { w: 30, h: 175 },
       position: { x: 400, y: 579.5 },
@@ -23,6 +23,8 @@ function Crane(world) {
     },
     b: {
       rotation: 0,
+      limit: 2.4,
+      speed: 0.02,
       rotationChange: 0,
       size: { w: 20, h: 150 },
       body: function() { return segmentBody(this); }
@@ -54,6 +56,7 @@ function Crane(world) {
     angleChange: 0,
     angleSpeed: 0.01,
     rotation: 0,
+    rotationSpeed: 0.015,
     rotationChange: 0
   };
 
@@ -76,56 +79,65 @@ function Crane(world) {
 
   function keydown(event) {
     switch(event.keyCode) {
-      case 77: // m
-        segments.a.rotationChange = segments.a.speed;
-        break;
-      case 78: // n
-        segments.a.rotationChange = -segments.a.speed;
-        break;
       case 37: // left
-        claw.rotationChange = -speed;
-        break;
-      case 39: // right
-        claw.rotationChange = speed;
+        claw.rotationChange = -claw.rotationSpeed;
         break;
       case 38: // down
         claw.angleChange = claw.angleSpeed;
         break;
+      case 39: // right
+        claw.rotationChange = claw.rotationSpeed;
+        break;
       case 40: // up
         claw.angleChange = -claw.angleSpeed;
         break;
-      case 188: // ,
-        segments.b.rotationChange = -speed;
+      case 65: // a
+        segments.b.rotationChange = -segments.b.speed;
         break;
-      case 190: // .
-        segments.b.rotationChange = speed;
+      case 83: // s
+        segments.b.rotationChange = segments.b.speed;
+        break;
+      case 88: // x
+        segments.a.rotationChange = segments.a.speed;
+        break;
+      case 90: // z
+        segments.a.rotationChange = -segments.a.speed;
         break;
     }
   }
 
   function keyup(event) {
     switch(event.keyCode) {
-      case 77:  // m
-      case 78:  // n
-        segments.a.rotationChange = 0;
-        break;
       case 37:  // left
-      case 39:  // right
         claw.rotationChange = 0;
         break;
       case 38:  // down
+        claw.angleChange = 0;
+        break;
+      case 39:  // right
+        claw.rotationChange = 0;
+        break;
       case 40:  // up
         claw.angleChange = 0;
         break;
-      case 188: // ,
-      case 190: // .
+      case 65: // a
         segments.b.rotationChange = 0;
+        break;
+      case 83: // s
+        segments.b.rotationChange = 0;
+        break;
+      case 88:  // x
+        segments.a.rotationChange = 0;
+        break;
+      case 90:  // z
+        segments.a.rotationChange = 0;
         break;
     }
   }
 
   function update() {
-    applySegmentChanges();
+    applySegmentChanges(segments.a);
+    applySegmentChanges(segments.b);
     applyClawChanges();
     updatePositions();
   }
@@ -152,9 +164,8 @@ function Crane(world) {
     claw.rotation = Math.min(Math.max(claw.rotation + claw.rotationChange, -1.65), 1.65);
   }
 
-  function applySegmentChanges() {
-    segments.a.rotation = Math.min(Math.max(segments.b.rotation + segments.a.rotationChange, -1.0), 1.0);
-    segments.b.rotation = Math.min(Math.max(segments.b.rotation + segments.b.rotationChange, -2.4), 2.4);
+  function applySegmentChanges(segment) {
+    segment.rotation = Math.min(Math.max(segment.rotation + segment.rotationChange, -segment.limit), segment.limit);
   }
 
   function updateSegment(body, position, rotation) {
@@ -165,34 +176,34 @@ function Crane(world) {
   }
 
   function updatePositions() {
-    var segPos, clawPos, rotation, py;
+    var segPos, clawPos, segRot, clawRot;
 
     // segment a
-    rotation = segments.a.rotation;
-    segPos = segmentPosition(rotation, segments.a.position, segments.a.size);
-    updateSegment(segments.a.body(), segPos.center, rotation);
+    segRot = segments.a.rotation;
+    segPos = segmentPosition(segRot, segments.a.position, segments.a.size);
+    updateSegment(segments.a.body(), segPos.center, segRot);
 
     // segment b
-    rotation = segments.a.rotation + segments.b.rotation;
-    segPos = segmentPosition(rotation, segPos.tip, segments.b.size);
-    updateSegment(segments.b.body(), segPos.center, rotation);
+    segRot += segments.b.rotation;
+    segPos = segmentPosition(segRot, segPos.tip, segments.b.size);
+    updateSegment(segments.b.body(), segPos.center, segRot);
 
     // left claw
-    rotation = segments.a.rotation + segments.b.rotation + claw.rotation - claw.angle;
-    clawPos = segmentPosition(rotation, segPos.tip, segments.la.size);
-    updateSegment(segments.la.body(), clawPos.center, rotation);
+    clawRot = segRot + claw.rotation - claw.angle;
+    clawPos = segmentPosition(clawRot, segPos.tip, segments.la.size);
+    updateSegment(segments.la.body(), clawPos.center, clawRot);
 
-    rotation = segments.a.rotation + segments.b.rotation + claw.rotation - claw.angle + 1.2;
-    clawPos = segmentPosition(rotation, clawPos.tip, segments.lb.size);
-    updateSegment(segments.lb.body(), clawPos.center, rotation);
+    clawRot += 1.2;
+    clawPos = segmentPosition(clawRot, clawPos.tip, segments.lb.size);
+    updateSegment(segments.lb.body(), clawPos.center, clawRot);
 
     // right claw
-    rotation = segments.a.rotation + segments.b.rotation + claw.rotation  + claw.angle;
-    clawPos = segmentPosition(rotation, segPos.tip, segments.ra.size);
-    updateSegment(segments.ra.body(), clawPos.center, rotation);
+    clawRot = segRot + claw.rotation  + claw.angle;
+    clawPos = segmentPosition(clawRot, segPos.tip, segments.ra.size);
+    updateSegment(segments.ra.body(), clawPos.center, clawRot);
 
-    rotation = segments.a.rotation + segments.b.rotation + claw.rotation  + claw.angle - 1.2;
-    clawPos = segmentPosition(rotation, clawPos.tip, segments.rb.size);
-    updateSegment(segments.rb.body(), clawPos.center, rotation);
+    clawRot -= 1.2;
+    clawPos = segmentPosition(clawRot, clawPos.tip, segments.rb.size);
+    updateSegment(segments.rb.body(), clawPos.center, clawRot);
   }
 }

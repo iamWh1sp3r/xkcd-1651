@@ -5,20 +5,27 @@
     <meta charset="utf-8">
     <meta name="description" content="XKCD 1651">
     <meta name="author" content="François Richard">
+
+    <link rel="stylesheet" href="css/keys.css">
     <link rel="stylesheet" href="css/styles.css">
+
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.9.1/matter.min.js"></script>
     <title>XKCD 1651</title>
   </head>
   <body>
-    <div id="canvas-container"></div>
-    <ul>
-      <li>[.] rotate crane right</li>
-      <li>[,] rotate crane left</li>
-      <li>[left] rotate claw left</li>
-      <li>[right] rotate claw right</li>
-      <li>[up] open claw</li>
-      <li>[down] close claw</li>
-    </ul>
+    <div id="content">
+      <div id="canvas-container"></div>
+      <div id="help">
+        <div><span class="binding"><kbd class="light">z</kbd></span> rotate lower crane left</div>
+        <div><span class="binding"><kbd class="light">x</kbd></span> rotate lower crane right</div>
+        <div><span class="binding"><kbd class="light">a</kbd></span> rotate upper crane left</div>
+        <div><span class="binding"><kbd class="light">s</kbd></span> rotate upper crane right</div>
+        <div><span class="binding"><kbd class="light">left</kbd></span> rotate claw left</div>
+        <div><span class="binding"><kbd class="light">right</kbd></span> rotate claw right</div>
+        <div><span class="binding"><kbd class="light">up</kbd></span> open claw</div>
+        <div><span class="binding"><kbd class="light">down</kbd></span> close claw</div>
+      </div>
+    </div>
   </body>
   <script src="js/decomp.min.js"></script>
   <script src="js/crane.js"></script>

@@ -30,16 +30,14 @@
   Engine.run(engine);
 
   function addBodies() {
-    // add ground plane
-    var offset = 5;
-    var ground = Bodies.rectangle(400, 600 + offset, 800.5 + 2 * offset, 50.5, { isStatic: true });
+    var ground = Bodies.rectangle(600, 600, 500, 50, { isStatic: true });
     World.add(world, ground);
 
-    // add some boxes
-    var stack = Composites.stack(20, 20, 20, 4, 0, 0, function(x, y) {
-      return Bodies.rectangle(x, y, Common.random(15, 20), Common.random(15, 20));
-    });
-    World.add(world, stack);
+    var slope = Bodies.rectangle(850, 585, 500, 50, { isStatic: true, angle: -0.07 });
+    World.add(world, slope);
+
+    var car = Composites.car(900, 400, 100, 40, 30);
+    World.add(world, car);
   }
 
   function addConstraints() {

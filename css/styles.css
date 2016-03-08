@@ -1,0 +1,17 @@
+body {
+  font: normal 1em Lucida, Arial, sans-serif;
+}
+
+#canvas-container, #help {
+  margin: 0 auto;
+  width: 800px;
+}
+
+#help div {
+  line-height: 25px;
+}
+
+#help .binding {
+  display: inline-block;
+  width: 50px;
+}
