@@ -1,17 +1,26 @@
 body {
-  font: normal 1em Lucida, Arial, sans-serif;
+  font: normal 0.8em Lucida, Arial, sans-serif;
 }
 
-#canvas-container, #help {
+#content {
   margin: 0 auto;
   width: 800px;
 }
 
-#help div {
+#canvas-container, #link {
+  margin-bottom: 12px;
+}
+
+.help {
+  float: left;
+  width: 50%;
+}
+
+.help div {
   line-height: 25px;
 }
 
-#help .binding {
+.help .binding {
   display: inline-block;
   width: 50px;
 }

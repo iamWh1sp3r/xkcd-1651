@@ -108,16 +108,16 @@ function Crane(world) {
 
   function keyup(event) {
     switch(event.keyCode) {
-      case 37:  // left
+      case 37: // left
         claw.rotationChange = 0;
         break;
-      case 38:  // down
+      case 38: // down
         claw.angleChange = 0;
         break;
-      case 39:  // right
+      case 39: // right
         claw.rotationChange = 0;
         break;
-      case 40:  // up
+      case 40: // up
         claw.angleChange = 0;
         break;
       case 65: // a
