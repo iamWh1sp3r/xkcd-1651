@@ -17,7 +17,7 @@ function Crane(world) {
       limit: 0.5,
       speed: 0.01,
       rotationChange: 0,
-      size: { w: 30, h: 175 },
+      size: { w: 20, h: 100 },
       position: { x: 400, y: 579.5 },
       body: function() { return segmentBody(this); }
     },
@@ -26,27 +26,27 @@ function Crane(world) {
       limit: 2.4,
       speed: 0.02,
       rotationChange: 0,
-      size: { w: 20, h: 150 },
+      size: { w: 15, h: 70 },
       body: function() { return segmentBody(this); }
     },
     la: {
       rotation: 0,
-      size: { w: 10, h: 90 },
+      size: { w: 8, h: 60 },
       body: function() { return segmentBody(this); }
     },
     lb: {
       rotation: 0,
-      size: { w: 10, h: 50 },
+      size: { w: 8, h: 30 },
       body: function() { return segmentBody(this); }
     },
     ra: {
       rotation: 0,
-      size: { w: 10, h: 90 },
+      size: { w: 8, h: 60 },
       body: function() { return segmentBody(this); }
     },
     rb: {
       rotation: 0,
-      size: { w: 10, h: 50 },
+      size: { w: 8, h: 30 },
       body: function() { return segmentBody(this); }
     }
   };

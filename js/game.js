@@ -1,3 +1,8 @@
+var XKCD_1651 = {
+  defaultCategory: 0x0001,
+  wheelsCategory: 0x0002
+};
+
 (function () {
   "use strict";
 
@@ -18,12 +23,14 @@
   var renderOptions = engine.render.options;
       renderOptions.showAxes = true;
       renderOptions.showPositions = true;
+      // renderOptions.wireframes = false;
 
   addBodies();
   addConstraints();
   addEvents();
 
   var crane = new Crane(world);
+  var car = new Car(world);
 
   // run the engine
   Events.on(engine, 'beforeUpdate', engineBeforeUpdate);
@@ -33,11 +40,11 @@
     var ground = Bodies.rectangle(600, 600, 500, 50, { isStatic: true });
     World.add(world, ground);
 
-    var slope = Bodies.rectangle(850, 585, 500, 50, { isStatic: true, angle: -0.07 });
+    var slope = Bodies.rectangle(850, 580, 500, 50, { isStatic: true, angle: -0.09 });
     World.add(world, slope);
 
-    var car = Composites.car(900, 400, 100, 40, 30);
-    World.add(world, car);
+    // var car = Composites.car(900, 400, 100, 40, 30);
+    // World.add(world, car);
   }
 
   function addConstraints() {
