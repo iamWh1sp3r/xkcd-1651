@@ -30,7 +30,7 @@ var XKCD_1651 = {
   addEvents();
 
   var crane = new Crane(world);
-  var car = new Car(world);
+  // var car = new Car(world);
 
   // run the engine
   Events.on(engine, 'beforeUpdate', engineBeforeUpdate);
@@ -42,6 +42,11 @@ var XKCD_1651 = {
 
     var slope = Bodies.rectangle(850, 580, 500, 50, { isStatic: true, angle: -0.09 });
     World.add(world, slope);
+
+    var stack = Composites.stack(500, 50, 12, 3, 0, 0, function(x, y) {
+      return Bodies.circle(x, y, 8);
+    });
+    World.add(world, stack);
 
     // var car = Composites.car(900, 400, 100, 40, 30);
     // World.add(world, car);
